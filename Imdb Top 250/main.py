@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-
 ##############################################################################################
 class Film:
     def __init__(self, posterLink, title, year, rating, cast):
@@ -12,17 +11,11 @@ class Film:
         self.rating = rating
         self.cast = cast
 
-
 ##############################################################################################
 
-def createJsonFile():
-    pass
-
-
-
-
-
-
+def createJsonFile(filmData):
+    with open("ImdbTop250.json","w") as file:
+        json.dump(filmData, file)
 
 ##############################################################################################
 def getCastList(castURL):
@@ -54,8 +47,8 @@ def createDictionaryFromData(filmList):
     return filmData
 ##############################################################################################
 
-
 url = "https://www.imdb.com/chart/top/"
 html = requests.get(url).content
 bSoup = BeautifulSoup(html, "html.parser")
 filmList = bSoup.find("tbody", {"class":"lister-list"}).find_all("tr",limit=5)
+createJsonFile(createDictionaryFromData(filmList))
