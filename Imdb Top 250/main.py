@@ -19,6 +19,29 @@ def createJsonFile(filmData):
         json.dump(filmData, file, ensure_ascii=False)
 
 ##############################################################################################
+
+def createDictionaryFromData(filmList):
+    filmData = {}
+    for idx, film in enumerate(filmList):
+        posterLink = film.find("td",{"class":"posterColumn"}).find("img")["src"]
+        title = film.find("td",{"class":"titleColumn"}).find("a").text
+        year = film.find("td",{"class":"titleColumn"}).find("span").text.strip("()")
+        rating = film.find("td",{"class":"ratingColumn imdbRating"}).find("strong").text
+        castURL = "https://www.imdb.com"+film.find("td",{"class":"titleColumn"}).find("a")["href"]
+        castData = getCastList(castURL)
+        f = Film(posterLink, title, year, rating, castData)
+        filmData[idx+1] = f.__dict__
+        print(f"Film {idx+1} done!")
+    
+    return filmData
+##############################################################################################
+def scrapDataFromImdbWebsite():
+    url = "https://www.imdb.com/chart/top/"
+    html = requests.get(url).content
+    bSoup = BeautifulSoup(html, "html.parser")
+    filmList = bSoup.find("tbody", {"class":"lister-list"}).find_all("tr")
+    return filmList
+
 def getCastList(castURL):
     htmlCast = requests.get(castURL).content
     bSoupForCast = BeautifulSoup(htmlCast,"html.parser")
@@ -36,25 +59,19 @@ def getCastList(castURL):
     return cast
 
 ##############################################################################################
-def createDictionaryFromData(filmList):
-    filmData = {}
-    for idx, film in enumerate(filmList):
-        posterLink = film.find("td",{"class":"posterColumn"}).find("img")["src"]
-        title = film.find("td",{"class":"titleColumn"}).find("a").text
-        year = film.find("td",{"class":"titleColumn"}).find("span").text.strip("()")
-        rating = film.find("td",{"class":"ratingColumn imdbRating"}).find("strong").text
-        castURL = "https://www.imdb.com"+film.find("td",{"class":"titleColumn"}).find("a")["href"]
-        castData = getCastList(castURL)
-        f = Film(posterLink, title, year, rating, castData)
-        filmData[idx+1] = f.__dict__
-        print(f"Film {idx+1} done!")
-    
-    return filmData
-##############################################################################################
-
-url = "https://www.imdb.com/chart/top/"
-html = requests.get(url).content
-bSoup = BeautifulSoup(html, "html.parser")
-filmList = bSoup.find("tbody", {"class":"lister-list"}).find_all("tr")
-createJsonFile(createDictionaryFromData(filmList))
-#print(createDictionaryFromData(filmList))
+##### MAIN SECTION #####
+while True:
+    print("Menu".center(50, "*"))
+    data = []
+    choice = input("1 - Scrap data from IMDB website\n2 - Export data as a JSON file\n3 - Search data\n4 - Exit")
+    if choice == "1":
+        pass
+    elif choice == "2":
+        pass
+    elif choice == "3":
+        pass
+    elif choice == "4":
+        print("Exiting.....")
+        break
+    else:
+        print("Please enter valid value !")
