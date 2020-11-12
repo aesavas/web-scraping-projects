@@ -31,8 +31,9 @@ def createDictionaryFromData(filmList):
         castData = getCastList(castURL)
         f = Film(posterLink, title, year, rating, castData)
         filmData[idx+1] = f.__dict__
-        print(f"Film {idx+1} done!")
-    
+        print(f'Film {idx+1} done!')
+    print("All films are ready to use!\n\n")
+
     return filmData
 ##############################################################################################
 def scrapDataFromImdbWebsite():
@@ -59,19 +60,34 @@ def getCastList(castURL):
     return cast
 
 ##############################################################################################
+def printData(dictData):
+    idx = 1
+    for filmData in dictData.values():
+        print(f'Film {idx}'.center(70,"."))
+        print(f'Title : {filmData["title"]}\nYear : {filmData["year"]}\nRating : {filmData["rating"]}')
+        print("Cast".center(70,"_"))
+        for role,performer in filmData["cast"].items():
+            print(f'Role : {role.ljust(35)} Performer : {performer}')
+        print("\n")
+        idx += 1
+##############################################################################################
 ##### MAIN SECTION #####
+data = []
+dictData = {}
 while True:
-    print("Menu".center(50, "*"))
-    data = []
-    choice = input("1 - Scrap data from IMDB website\n2 - Export data as a JSON file\n3 - Search data\n4 - Exit")
-    if choice == "1":
-        pass
-    elif choice == "2":
-        pass
-    elif choice == "3":
-        pass
-    elif choice == "4":
+    print("Menu".center(32, "*"))
+    choice = input("1 - Export data as a JSON file\n2 - Print data\n3 - Exit\nPlease enter choice : ")
+    if choice == "3":
         print("Exiting.....")
         break
     else:
-        print("Please enter valid value !")
+        if len(data) == 0:
+            data = scrapDataFromImdbWebsite()
+            dictData = createDictionaryFromData(data)
+        if choice == "1":
+            createJsonFile(dictData)
+            print("JSON file is ready.")
+        elif choice == "2":
+            printData(dictData)
+        else:
+            print("Please enter valid value !")
